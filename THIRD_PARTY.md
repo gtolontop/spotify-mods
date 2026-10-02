@@ -1,14 +1,13 @@
-# Sources tierces
+# Sources et licences
 
-Ce dépôt privé contient des copies de sources tierces et des adaptations locales pour un usage personnel. Les auteurs d'origine conservent leurs droits ; leurs licences s'appliquent à leurs fichiers.
+Les licences d'origine s'appliquent aux composants inclus. Copies disponibles dans [`licenses/`](licenses/).
 
-| Composant | Source |
-| --- | --- |
-| Spicy Lyrics 6.3.98 | https://github.com/Spikerko/spicy-lyrics — AGPL-3.0 ; distribution https://public.storage.spicylyrics.org/spicy-lyrics%406.3.98.mjs |
-| Spicetify : Full App Display, Shuffle+, Loopy Loop, Lyrics Plus | https://github.com/spicetify/cli — Apache-2.0 ; distribution 2.45.1 |
-| Marketplace | https://github.com/spicetify/marketplace — voir licence amont |
-| Song Stats et Adblockify | https://github.com/rxri/spicetify-extensions — voir licence amont |
-| Oneko | https://github.com/kyrie25/spicetify-oneko — voir licence amont et attribution incluse dans le script |
-| LRCLIB | https://lrclib.net — service de paroles utilisé par Lyrics Plus |
+| Composant | Source | Licence |
+| --- | --- | --- |
+| Spicy Lyrics 6.3.98 | [Spikerko/spicy-lyrics](https://github.com/Spikerko/spicy-lyrics) | AGPL-3.0 |
+| Full App Display, Shuffle+, Loopy Loop, Lyrics Plus | [spicetify/cli](https://github.com/spicetify/cli), version 2.45.1 | Apache-2.0 |
+| Marketplace | [spicetify/marketplace](https://github.com/spicetify/marketplace) | MIT |
+| Song Stats, Adblockify | [rxri/spicetify-extensions](https://github.com/rxri/spicetify-extensions) | MIT |
+| Oneko | [kyrie25/spicetify-oneko](https://github.com/kyrie25/spicetify-oneko) | MIT |
 
-Les copies de licences disponibles sont dans `licenses/`.
+Lyrics Plus utilise [LRCLIB](https://lrclib.net) comme source de paroles.
