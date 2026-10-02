@@ -51,6 +51,8 @@ Attendre environ 20 secondes après l'ouverture de Spotify. Le lecteur ne renvoi
 
 Modifier les sources ici, vérifier les scripts et les plugins dans Spotify, puis committer et pousser les corrections. Ne pas remplacer les fichiers natifs par un patch SpotX. Ne pas copier de profils Spotify, jetons, cookies, diagnostics ou sauvegardes dans ce dépôt.
 
-`scripts/Validate.ps1` vérifie les fichiers du manifeste et la syntaxe des scripts. GitHub exécute également cette vérification à chaque push ; les contrôles dans Spotify restent nécessaires pour valider une nouvelle version.
+`scripts/Validate.ps1` vérifie les fichiers du manifeste et la syntaxe des scripts. L'installateur l'exécute avant chaque réparation ou mise à jour ; les contrôles dans Spotify restent nécessaires pour valider une nouvelle version.
+
+GitHub Actions n'a pas pu démarrer les tâches lors de la publication initiale (`startup_failure`, aucun job créé). Le pack utilise donc les vérifications locales avant installation et ne dépend pas d'une CI distante.
 
 Les sources tierces et leurs licences sont indiquées dans [THIRD_PARTY.md](THIRD_PARTY.md).

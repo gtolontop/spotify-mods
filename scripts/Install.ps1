@@ -48,6 +48,7 @@ function Get-NativeHashes {
 }
 
 try {
+    & (Join-Path $PSScriptRoot 'Validate.ps1')
     if (!(Test-Path -LiteralPath $spicetifyExe)) { throw 'Spicetify is not installed.' }
     $nativeHashes = Get-NativeHashes
     $spotifyVersion = (Get-Item -LiteralPath $spotifyExe).VersionInfo.ProductVersion
