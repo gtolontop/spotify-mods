@@ -1,0 +1,9 @@
+*.log
+*.bak
+*.exe
+*.dll
+*.spa
+.env*
+backups/
+diagnostics/
+__pycache__/

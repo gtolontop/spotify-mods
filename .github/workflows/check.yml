@@ -1,0 +1,17 @@
+name: Validate pack
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate manifest, PowerShell and JavaScript
+        shell: powershell
+        run: .\scripts\Validate.ps1
