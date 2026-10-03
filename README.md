@@ -2,7 +2,7 @@
 
 Plugins Spicetify pour Spotify sous Windows.
 
-Spotify **1.3.1.234** · Spicetify **2.45.1**
+Spotify **1.3.3.264** · Spicetify **2.45.3**
 
 - `Repair.cmd` : installer ou réparer.
 - `Update.cmd` : récupérer et installer la dernière version du dépôt.

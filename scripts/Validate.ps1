@@ -22,3 +22,4 @@ foreach ($folder in @('Extensions', 'CustomApps', 'tools')) {
         }
 }
 Write-Host 'Manifest and script syntax validated.'
+& (Join-Path $repoRoot 'tests\SpotifyState.Tests.ps1')

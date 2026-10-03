@@ -2,7 +2,7 @@
   const key = "spotify-plugin-diagnostics";
   const records = [];
   const record = (kind, detail) => {
-    records.push({ kind, detail });
+    records.push({ kind, detail, time: Date.now() });
     if (records.length > 40) records.shift();
     localStorage.setItem(key, JSON.stringify(records));
   };

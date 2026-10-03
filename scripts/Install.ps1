@@ -63,7 +63,7 @@ try {
     $installationStarted = $true
     $snapshotRoot = Join-Path $spicetifyRoot ('ManagedBackups\' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
     New-Item -ItemType Directory -Path $snapshotRoot -Force | Out-Null
-    foreach ($name in @('config-xpui.ini', 'Extensions', 'CustomApps', 'Themes', 'AutoApply.ps1')) {
+    foreach ($name in @('config-xpui.ini', 'Extensions', 'CustomApps', 'Themes', 'Backup', 'AutoApply.ps1')) {
         $source = Join-Path $spicetifyRoot $name
         if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $snapshotRoot -Recurse }
     }
@@ -98,7 +98,7 @@ try {
     $config = Get-Content -LiteralPath $configPath -Raw
     $backup = [regex]::Match($config, '(?ms)^\[Backup\].*?^version\s*=\s*([^\r\n]+)')
     $backupVersion = ($backup.Groups[1].Value.Trim() -split '\.g')[0]
-    if ($backupVersion -ne $spotifyVersion) {
+    if ($backupVersion -ne $spotifyVersion -or (Test-Path -LiteralPath (Join-Path $spotifyRoot 'Apps\xpui.spa'))) {
         $launched = [regex]::Match((Get-Content -LiteralPath $prefs -Raw), '(?m)^app.last-launched-version="([^"]+)"')
         if (($launched.Groups[1].Value -split '\.g')[0] -ne $spotifyVersion) {
             throw 'Open Spotify once before rebuilding its backup, then run this installer again.'
