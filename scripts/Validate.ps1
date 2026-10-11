@@ -23,3 +23,5 @@ foreach ($folder in @('Extensions', 'CustomApps', 'tools')) {
 }
 Write-Host 'Manifest and script syntax validated.'
 & (Join-Path $repoRoot 'tests\SpotifyState.Tests.ps1')
+& node (Join-Path $repoRoot 'tests\SpicyRoute.Tests.js')
+if ($LASTEXITCODE -ne 0) { throw 'Spicy Lyrics route compatibility test failed.' }
