@@ -1,3 +1,5 @@
+[CmdletBinding()]
+param([switch]$NoLaunch)
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $spicetifyRoot = Join-Path $env:APPDATA 'spicetify'
@@ -7,8 +9,11 @@ try {
     $needsInstall = $false
     $spotifyRoot = Join-Path $env:APPDATA 'Spotify'
     $spotifyExe = Join-Path $spotifyRoot 'Spotify.exe'
-    if (!(Test-Path -LiteralPath $spotifyExe)) { throw 'Spotify executable is missing.' }
-    $spotifyVersion = (Get-Item -LiteralPath $spotifyExe).VersionInfo.ProductVersion
+    $spotifyVersion = ''
+    if (!(Test-Path -LiteralPath $spotifyExe)) { $needsInstall = $true }
+    else { $spotifyVersion = (Get-Item -LiteralPath $spotifyExe).VersionInfo.ProductVersion }
+    $manifest = Get-Content -LiteralPath (Join-Path $repoRoot 'manifest.json') -Raw | ConvertFrom-Json
+    if ($spotifyVersion -ne $manifest.spotifyVersion) { $needsInstall = $true }
     $configPath = Join-Path $spicetifyRoot 'config-xpui.ini'
     $backupVersion = ''
     if (!(Test-Path -LiteralPath $configPath)) { $needsInstall = $true }
@@ -48,7 +53,7 @@ try {
     }
     if ($needsInstall) {
         $wasRunning = [bool](Get-Process Spotify -ErrorAction SilentlyContinue)
-        & (Join-Path $PSScriptRoot 'Install.ps1') -NoLaunch:(!$wasRunning)
+        & (Join-Path $PSScriptRoot 'Install.ps1') -NoLaunch:($NoLaunch -or !$wasRunning)
         "$(Get-Date -Format s) Pack restored from local repository." | Add-Content -LiteralPath $log
     } else {
         "$(Get-Date -Format s) Installed pack matches local repository." | Add-Content -LiteralPath $log

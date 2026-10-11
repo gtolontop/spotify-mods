@@ -12,6 +12,8 @@ $configPath = Join-Path $spicetifyRoot 'config-xpui.ini'
 $snapshotRoot = $null
 $wasRunning = [bool](Get-Process Spotify -ErrorAction SilentlyContinue)
 $installationStarted = $false
+$installMutex = [Threading.Mutex]::new($false, 'Local\SpotifyModsInstall')
+$ownsMutex = $false
 
 function Invoke-Spicetify {
     param([string[]]$Arguments)
@@ -48,18 +50,23 @@ function Get-NativeHashes {
 }
 
 try {
+    try { $ownsMutex = $installMutex.WaitOne(40000) }
+    catch [Threading.AbandonedMutexException] { $ownsMutex = $true }
+    if (!$ownsMutex) { throw 'Another pack installation is still running.' }
     & (Join-Path $PSScriptRoot 'Validate.ps1')
     if (!(Test-Path -LiteralPath $spicetifyExe)) { throw 'Spicetify is not installed.' }
+    $cliVersion = (& $spicetifyExe -v).Trim()
+    if ($cliVersion -ne $manifest.spicetifyVersion) {
+        throw "This pack supports Spicetify $($manifest.spicetifyVersion); installed version is $cliVersion."
+    }
+    $clientRestored = & (Join-Path $PSScriptRoot 'RestoreOfficialSpotify.ps1')
+    if ($clientRestored) { $installationStarted = $true }
     $nativeHashes = Get-NativeHashes
     $spotifyVersion = (Get-Item -LiteralPath $spotifyExe).VersionInfo.ProductVersion
     if ($spotifyVersion -ne $manifest.spotifyVersion) {
         throw "This pack supports Spotify $($manifest.spotifyVersion); installed version is $spotifyVersion. Update and verify the pack first."
     }
-    $cliVersion = (& $spicetifyExe -v).Trim()
-    if ($cliVersion -ne $manifest.spicetifyVersion) {
-        throw "This pack supports Spicetify $($manifest.spicetifyVersion); installed version is $cliVersion."
-    }
-    if ($wasRunning) { Stop-Process -Name Spotify -Force; Start-Sleep -Seconds 1 }
+    if ($wasRunning) { Stop-Process -Name Spotify -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1 }
     $installationStarted = $true
     $snapshotRoot = Join-Path $spicetifyRoot ('ManagedBackups\' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
     New-Item -ItemType Directory -Path $snapshotRoot -Force | Out-Null
@@ -117,6 +124,7 @@ try {
     $autoApplyPath = Join-Path $spicetifyRoot 'AutoApply.ps1'
     $entrypoint = (Join-Path $repoRoot 'scripts\AutoApply.ps1').Replace("'", "''")
     [IO.File]::WriteAllText($autoApplyPath, "& '$entrypoint'`r`n", [Text.UTF8Encoding]::new($false))
+    & (Join-Path $PSScriptRoot 'SetLauncher.ps1')
     Write-Host "Pack $($manifest.packVersion) installed. Backup: $snapshotRoot"
 } catch {
     if ($snapshotRoot) { Write-Host "Previous files are saved in $snapshotRoot" }
@@ -125,4 +133,6 @@ try {
     if ($installationStarted -and !$NoLaunch -and !(Get-Process Spotify -ErrorAction SilentlyContinue)) {
         Start-Process -FilePath $spotifyExe
     }
+    if ($ownsMutex) { $installMutex.ReleaseMutex() }
+    $installMutex.Dispose()
 }
