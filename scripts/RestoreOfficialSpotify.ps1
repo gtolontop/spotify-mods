@@ -89,7 +89,7 @@ try {
 }
 
 # Initialize the release marker without resetting the profile.
-Start-Process -FilePath $spotifyExe -WindowStyle Hidden
+Start-Process -FilePath $spotifyExe -ArgumentList $manifest.launchFlags -WindowStyle Hidden
 $initialized = $false
 try {
     for ($attempt = 0; $attempt -lt 50; $attempt++) {

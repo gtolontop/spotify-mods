@@ -18,3 +18,9 @@ foreach ($directory in @($desktop, $programs)) {
     $link.IconLocation = (Join-Path $env:APPDATA 'Spotify\Spotify.exe') + ',0'
     $link.Save()
 }
+$runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+$autoStart = (Get-ItemProperty -LiteralPath $runKey -ErrorAction SilentlyContinue).Spotify
+if ($autoStart -and $autoStart -match 'Spotify\.exe') {
+    $target = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    Set-ItemProperty -LiteralPath $runKey -Name Spotify -Value ('"' + $target + '" ' + $link.Arguments)
+}

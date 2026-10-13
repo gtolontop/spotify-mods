@@ -24,6 +24,8 @@ Les sauvegardes sont dans `%APPDATA%\spicetify\ManagedBackups`.
 
 Le raccourci Spotify du bureau et du menu Démarrer passe par `scripts/Launch.ps1`. Une version incompatible est remplacée par la version signée indiquée dans `manifest.json`, puis le pack est réappliqué. Le profil et les réglages sont conservés. Le client précédent est sauvegardé dans `%LOCALAPPDATA%\spotify-mods\ClientBackups`.
 
+Ces lancements désactivent les mises à jour automatiques de Spotify avec ses options `--update-endpoint-override` et `--disable-update-restarts`. Le pack garde sa version compatible jusqu'à une mise à jour vérifiée du dépôt.
+
 L'installateur est téléchargé depuis une archive tierce ; son empreinte SHA-256 et sa signature Spotify AB sont vérifiées avant extraction. Aucun exécutable n'est modifié par un patch.
 
 Pour les diagnostics, attendre environ 20 secondes après l'ouverture de Spotify. Relancer `Repair.cmd` pour les désactiver.

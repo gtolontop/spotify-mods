@@ -94,7 +94,16 @@ try {
         Copy-Item -LiteralPath (Join-Path $repoRoot 'tools\00-plugin-diagnostics.js') -Destination (Join-Path $spicetifyRoot 'Extensions\00-plugin-diagnostics.js') -Force
     }
     foreach ($property in $manifest.settings.PSObject.Properties) {
-        Invoke-Spicetify -Arguments @('config', $property.Name, [string]$property.Value)
+        if ($property.Name -eq 'spotify_launch_flags') {
+            # Values beginning with -- are consumed as CLI options by Spicetify.
+            $configText = Get-Content -LiteralPath $configPath -Raw
+            $pattern = '(?m)^spotify_launch_flags\s*=[^\r\n]*'
+            if (![regex]::IsMatch($configText, $pattern)) { throw 'Spotify launch-flags configuration field is missing.' }
+            $configText = [regex]::Replace($configText, $pattern, 'spotify_launch_flags = ' + [string]$property.Value)
+            [IO.File]::WriteAllText($configPath, $configText, [Text.UTF8Encoding]::new($false))
+        } else {
+            Invoke-Spicetify -Arguments @('config', $property.Name, [string]$property.Value)
+        }
     }
     # The CLI's extensions field accepts one value at a time.
     foreach ($extension in $manifest.extensions) { Invoke-Spicetify -Arguments @('config', 'extensions', $extension) }
@@ -131,7 +140,7 @@ try {
     throw
 } finally {
     if ($installationStarted -and !$NoLaunch -and !(Get-Process Spotify -ErrorAction SilentlyContinue)) {
-        Start-Process -FilePath $spotifyExe
+        Start-Process -FilePath $spotifyExe -ArgumentList $manifest.launchFlags
     }
     if ($ownsMutex) { $installMutex.ReleaseMutex() }
     $installMutex.Dispose()

@@ -19,6 +19,9 @@ try {
     if (!(Test-Path -LiteralPath $configPath)) { $needsInstall = $true }
     else {
         $config = Get-Content -LiteralPath $configPath -Raw
+        foreach ($flag in $manifest.launchFlags) {
+            if (!$config.Contains($flag)) { $needsInstall = $true }
+        }
         $backup = [regex]::Match($config, '(?ms)^\[Backup\].*?^version\s*=\s*([^\r\n]+)')
         $backupVersion = ($backup.Groups[1].Value.Trim() -split '\.g')[0]
     }

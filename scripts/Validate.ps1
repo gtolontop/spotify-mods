@@ -1,6 +1,9 @@
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $manifest = Get-Content -LiteralPath (Join-Path $repoRoot 'manifest.json') -Raw | ConvertFrom-Json
+if (($manifest.launchFlags -join '|') -ne $manifest.settings.spotify_launch_flags) {
+    throw 'Managed and Spicetify launch flags differ.'
+}
 foreach ($extension in $manifest.extensions) {
     if (!(Test-Path -LiteralPath (Join-Path $repoRoot "Extensions\$extension"))) { throw "Missing extension: $extension" }
 }
